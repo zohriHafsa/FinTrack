@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: ai-insights-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5438/ai_db
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9090/realms/fintrack360
+
+server:
+  port: 8086
+
+logging:
+  level:
+    com.fintrack360: DEBUG

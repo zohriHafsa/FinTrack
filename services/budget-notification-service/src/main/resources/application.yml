@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: budget-notification-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5437/budget_db
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9090/realms/fintrack360
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: budget-notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.fintrack360.*"
+
+server:
+  port: 8085
+
+logging:
+  level:
+    com.fintrack360: DEBUG
