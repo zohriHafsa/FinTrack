@@ -20,6 +20,26 @@ spring:
         jwt:
            issuer-uri: http://localhost:9090/realms/fintrack360
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+    topics:
+      company-registration: company.registration
+
+keycloak:
+  auth-server-url: http://localhost:9090
+  realm: fintrack360
+  admin:
+    client-id: fintrack360-backend
+    client-secret: MqJf6zD8lsUa58DNtJwqRfDX7nnFBX7z
+    username: admin
+    password: admin12
+
 server:
   port: 8081
 

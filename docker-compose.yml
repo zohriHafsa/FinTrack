@@ -222,6 +222,22 @@ services:
   #   networks:
   #     - fintrack360-net
 
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: fintrack360-keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin12
+    ports:
+      - "9090:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      - fintrack360-net
+
+
 volumes:
   auth_db_data:
   company_db_data:
