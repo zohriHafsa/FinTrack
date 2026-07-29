@@ -9,7 +9,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -21,6 +21,21 @@ spring:
         jwt:
           issuer-uri: http://localhost:9090/realms/fintrack360
 
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: company-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.fintrack.*"
+        spring.json.value.default.type: "com.fintrack.Kafka.consumer.CompanyRegistrationEvent"
+
+    kafka:
+      topics:
+        company-registration: company.registration
 
 server:
   port: 8082
