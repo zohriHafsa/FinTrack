@@ -1,4 +1,4 @@
-version: "3.9"
+#version: "3.9"
 
 services:
   auth-db:
@@ -114,6 +114,21 @@ services:
     networks:
       - fintrack360-net
 
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: fintrack360-keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin12
+    ports:
+      - "9090:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      - fintrack360-net
+
   # ---- Backend microservices (uncomment once each service has code + Dockerfile) ----
 
   # auth-service:
@@ -214,6 +229,7 @@ volumes:
   invoice_db_data:
   budget_db_data:
   ai_db_data:
+  keycloak_data:
 
 networks:
   fintrack360-net:
