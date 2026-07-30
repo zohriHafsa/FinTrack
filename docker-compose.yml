@@ -6,8 +6,8 @@ services:
     container_name: auth-db
     environment:
       POSTGRES_DB: auth_db
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: fintrack360
+      POSTGRES_PASSWORD: fintrack360_pass
     ports:
       - "5433:5432"
     volumes:
@@ -20,8 +20,8 @@ services:
     container_name: company-db
     environment:
       POSTGRES_DB: company_db
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: fintrack360
+      POSTGRES_PASSWORD: fintrack360_pass
     ports:
       - "5434:5432"
     volumes:
@@ -34,8 +34,8 @@ services:
     container_name: transaction-db
     environment:
       POSTGRES_DB: transaction_db
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: fintrack360
+      POSTGRES_PASSWORD: fintrack360_pass
     ports:
       - "5435:5432"
     volumes:
@@ -48,8 +48,8 @@ services:
     container_name: invoice-db
     environment:
       POSTGRES_DB: invoice_db
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: fintrack360
+      POSTGRES_PASSWORD: fintrack360_pass
     ports:
       - "5436:5432"
     volumes:
@@ -62,8 +62,8 @@ services:
     container_name: budget-db
     environment:
       POSTGRES_DB: budget_db
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: fintrack360
+      POSTGRES_PASSWORD: fintrack360_pass
     ports:
       - "5437:5432"
     volumes:
@@ -76,8 +76,8 @@ services:
     container_name: ai-db
     environment:
       POSTGRES_DB: ai_db
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: fintrack360
+      POSTGRES_PASSWORD: fintrack360_pass
     ports:
       - "5438:5432"
     volumes:

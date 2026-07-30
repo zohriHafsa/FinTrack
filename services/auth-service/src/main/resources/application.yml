@@ -4,21 +4,19 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5433/auth_db
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    username: fintrack360
+    password: fintrack360_pass
+
   jpa:
     hibernate:
-        ddl-auto: validate
-    properties:
-        hibernate:
-          dialect: org.hibernate.dialect.postgreSQLDialect
+      ddl-auto: create-drop
     show-sql: false
 
   security:
     oauth2:
       resourceserver:
         jwt:
-           issuer-uri: http://localhost:9090/realms/fintrack360
+          issuer-uri: http://localhost:9090/realms/fintrack360
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -28,15 +26,14 @@ spring:
       properties:
         spring.json.add.type.headers: false
 
-    topics:
-      company-registration: company.registration
+kafka:
+  topics:
+    company-registration: company.registration
 
 keycloak:
   auth-server-url: http://localhost:9090
   realm: fintrack360
   admin:
-    client-id: fintrack360-backend
-    client-secret: MqJf6zD8lsUa58DNtJwqRfDX7nnFBX7z
     username: admin
     password: admin12
 
@@ -45,4 +42,6 @@ server:
 
 logging:
   level:
-    com.fintrack360: DEBUG
+    com.fintrack: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
