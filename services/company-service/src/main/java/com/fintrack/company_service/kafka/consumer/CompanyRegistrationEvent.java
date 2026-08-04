@@ -1,4 +1,4 @@
-package com.fintrack.Kafka.consumer;
+package com.fintrack.company_service.kafka.consumer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

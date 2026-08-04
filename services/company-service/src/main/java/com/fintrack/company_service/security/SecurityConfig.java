@@ -1,4 +1,4 @@
-package com.fintrack.security;
+package com.fintrack.company_service.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

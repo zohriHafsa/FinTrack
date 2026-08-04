@@ -1,10 +1,10 @@
-package com.fintrack.service;
+package com.fintrack.company_service.service;
 
-import com.fintrack.Kafka.consumer.CompanyRegistrationEvent;
-import com.fintrack.model.Company;
-import com.fintrack.model.Sector;
-import com.fintrack.repository.CompanyRepository;
-import com.fintrack.repository.SectorRepository;
+import com.fintrack.company_service.kafka.consumer.CompanyRegistrationEvent;
+import com.fintrack.company_service.model.Company;
+import com.fintrack.company_service.model.Sector;
+import com.fintrack.company_service.repository.CompanyRepository;
+import com.fintrack.company_service.repository.SectorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

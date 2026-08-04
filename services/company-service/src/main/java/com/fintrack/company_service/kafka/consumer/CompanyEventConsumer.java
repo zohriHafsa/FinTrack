@@ -1,6 +1,6 @@
-package com.fintrack.Kafka.consumer;
+package com.fintrack.company_service.kafka.consumer;
 
-import com.fintrack.service.CompanyService;
+import com.fintrack.company_service.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

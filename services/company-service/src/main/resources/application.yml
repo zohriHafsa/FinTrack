@@ -9,7 +9,10 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 #    properties:
 #      hibernate:
 #        dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -31,15 +34,15 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "com.fintrack.*"
-        spring.json.value.default.type: "com.fintrack.Kafka.consumer.CompanyRegistrationEvent"
+        spring.json.value.default.type: "com.fintrack.company_service.kafka.consumer.CompanyRegistrationEvent"
 
-    kafka:
-      topics:
-        company-registration: company.registration
+kafka:
+  topics:
+    company-registration: company.registration
 
 server:
   port: 8082
 
 logging:
   level:
-    com.fintrack360: DEBUG
+    com.fintrack: DEBUG
