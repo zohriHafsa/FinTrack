@@ -7,6 +7,7 @@ import com.fintrack.company_service.repository.CompanyRepository;
 import com.fintrack.company_service.repository.SectorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,31 +21,29 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final SectorRepository sectorRepository;
 
+    @Autowired
+    private CategoryService categoryService;
+
     @Transactional
     public void createCompanyFromEvent(CompanyRegistrationEvent event) {
-
-        //Normalize sector
         String normalizedSector = normalizeSector(event.getSector());
-        log.info("Creating company: {} in sector: {}", event.getCompanyName(), normalizedSector);
 
-        //Check if sector exists, create if not
         sectorRepository.findByName(normalizedSector)
-                .orElseGet(() -> {
-                    log.info("New sector detected, adding: {}", normalizedSector);
-                    return sectorRepository.save(
-                            Sector.builder().name(normalizedSector).build()
-                    );
-                });
+                .orElseGet(() -> sectorRepository.save(
+                        Sector.builder().name(normalizedSector).build()
+                ));
 
-        //Create company
         Company company = Company.builder()
                 .name(event.getCompanyName())
                 .sector(normalizedSector)
                 .ownerId(event.getUserId())
                 .build();
 
-        companyRepository.save(company);
+        Company saved = companyRepository.save(company);
         log.info("Company created successfully for owner: {}", event.getUserId());
+
+        // Seed default categories for the new company
+        categoryService.seedDefaultCategories(saved.getId());
     }
 
     public List<String> getAllSectors() {
