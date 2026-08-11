@@ -1,1 +1,42 @@
-cc
+spring:
+  application:
+    name: transaction-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5435/transaction_db
+    username: fintrack360
+    password: fintrack360_pass
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9090/realms/fintrack360
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+kafka:
+  topics:
+    transaction-created: transaction.created
+
+server:
+  port: 8083
+
+logging:
+  level:
+    com.fintrack: DEBUG
