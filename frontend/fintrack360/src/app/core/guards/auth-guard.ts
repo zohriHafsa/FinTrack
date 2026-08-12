@@ -1,5 +1,14 @@
+import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
+import { KeycloakService } from '../services/keycloak.service';
 
-export const authGuard: CanActivateFn = (route, state) => {
-  return true;
+export const authGuard: CanActivateFn = () => {
+  const keycloakService = inject(KeycloakService);
+
+  if (keycloakService.isAuthenticated()) {
+    return true;
+  }
+
+  keycloakService.login();
+  return false;
 };

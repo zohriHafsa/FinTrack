@@ -1,1 +1,24 @@
-<p>sidebar works!</p>
+<div class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="user-avatar">{{ username.charAt(0).toUpperCase() }}</div>
+    <span class="username">{{ username }}</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    @for (item of visibleMenuItems; track item.route) {
+      <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+        <span class="material-icons">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="logout()">
+      <span class="material-icons">logout</span>
+      <span>Logout</span>
+    </button>
+  </div>
+
+</div>
