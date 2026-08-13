@@ -84,4 +84,13 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(transactionService.importFromCsv(companyId, createdBy, file));
     }
+
+    @GetMapping("/monthly-summary")
+    public ResponseEntity<List<Map<String, Object>>> getMonthlySummary(
+            @RequestParam UUID companyId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return ResponseEntity.ok(
+                transactionService.getMonthlySummary(companyId, startDate, endDate));
+    }
 }

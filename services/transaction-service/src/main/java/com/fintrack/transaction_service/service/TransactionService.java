@@ -158,4 +158,44 @@ public class TransactionService {
         log.info("Imported {} transactions from CSV", imported.size());
         return imported;
     }
+    public List<Map<String, Object>> getMonthlySummary(
+            UUID companyId, LocalDate startDate, LocalDate endDate) {
+
+        List<Transaction> transactions = transactionRepository
+                .findWithFilters(companyId, null, null, startDate, endDate,
+                        PageRequest.of(0, 1000))
+                .getContent();
+
+        // Group by month
+        Map<String, Map<String, Object>> monthlyData = new LinkedHashMap<>();
+
+        LocalDate current = startDate.withDayOfMonth(1);
+        while (!current.isAfter(endDate)) {
+            String monthKey = current.getMonth().getDisplayName(
+                    java.time.format.TextStyle.SHORT,
+                    java.util.Locale.ENGLISH);
+            Map<String, Object> monthData = new HashMap<>();
+            monthData.put("month", monthKey);
+            monthData.put("income", BigDecimal.ZERO);
+            monthData.put("expense", BigDecimal.ZERO);
+            monthlyData.put(current.toString().substring(0, 7), monthData);
+            current = current.plusMonths(1);
+        }
+
+        for (Transaction t : transactions) {
+            String key = t.getDate().toString().substring(0, 7);
+            if (monthlyData.containsKey(key)) {
+                Map<String, Object> monthData = monthlyData.get(key);
+                if (t.getType() == TransactionType.INCOME) {
+                    BigDecimal current2 = (BigDecimal) monthData.get("income");
+                    monthData.put("income", current2.add(t.getAmount()));
+                } else {
+                    BigDecimal current2 = (BigDecimal) monthData.get("expense");
+                    monthData.put("expense", current2.add(t.getAmount()));
+                }
+            }
+        }
+
+        return new ArrayList<>(monthlyData.values());
+    }
 }

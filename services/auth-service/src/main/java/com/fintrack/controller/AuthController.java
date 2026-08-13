@@ -26,4 +26,19 @@ public class AuthController {
         RegisterResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<RegisterResponse> getCurrentUser(
+            @AuthenticationPrincipal Jwt jwt) {
+        String keycloakId = jwt.getSubject();
+        User user = userRepository.findByKeycloakId(keycloakId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(RegisterResponse.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .companyId(user.getCompanyId())
+                .message("ok")
+                .build());
+    }
 }

@@ -59,6 +59,10 @@ export class KeycloakService {
     return this.keycloak.tokenParsed?.['realm_access']?.['roles'] || [];
   }
 
+  getUserId(): string {
+    return this.keycloak.tokenParsed?.['sub'] || '';
+  }
+
   hasRole(role: string): boolean {
     return this.getRoles().includes(role);
   }
