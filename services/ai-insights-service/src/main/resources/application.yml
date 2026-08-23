@@ -17,13 +17,21 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9090/realms/fintrack360
+          jwk-set-uri: http://localhost:9090/realms/fintrack360/protocol/openid-connect/certs
 
   flyway:
     enabled: true
     locations: classpath:db/migration
+    baseline-on-migrate: true
 
-  kafka:
-    bootstrap-servers: localhost:9092
+gemini:
+  api:
+    key: AQ.Ab8RN6IZXtVVN1lz081TCR8f-mhrlqB3IqncK4qunN0ZFb2z_g
+    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent
+
+services:
+  transaction-service:
+    url: http://localhost:8083
 
 server:
   port: 8086
