@@ -27,7 +27,7 @@ public class InsightController {
     private final InsightGenerationService insightGenerationService;
 
     @GetMapping
-//    @PreAuthorize("@permissionService.hasAccessToCompany(#companyId)")
+    @PreAuthorize("@permissionService.hasAccessToCompany(#companyId)")
     public ResponseEntity<Page<InsightResponse>> getInsights(
             @RequestParam UUID companyId,
             @PageableDefault(size = 10, sort = "generatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -62,7 +62,7 @@ public class InsightController {
     }
 
     @PostMapping("/generate")
-//    @PreAuthorize("@permissionService.hasAccessToCompany(#companyId)")
+    @PreAuthorize("@permissionService.hasAccessToCompany(#companyId)")
     public ResponseEntity<Void> generateInsights(@RequestParam UUID companyId) {
         log.info("POST /api/insights/generate - companyId: {}", companyId);
 

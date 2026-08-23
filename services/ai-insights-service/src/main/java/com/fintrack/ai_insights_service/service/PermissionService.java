@@ -22,10 +22,10 @@ public class PermissionService {
             }
 
             if (authentication.getPrincipal() instanceof Jwt jwt) {
-                Object companyIdClaim = jwt.getClaim("company_id");
+                String companyIdClaim = jwt.getClaim("company_id");
 
                 if (companyIdClaim != null) {
-                    Long userCompanyId = ((Number) companyIdClaim).longValue();
+                    UUID userCompanyId = UUID.fromString(companyIdClaim);
                     boolean hasAccess = userCompanyId.equals(companyId);
 
                     if (!hasAccess) {
