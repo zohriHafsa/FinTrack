@@ -1,6 +1,8 @@
 package com.fintrack.company_service.service;
 
 import com.fintrack.company_service.kafka.consumer.CompanyRegistrationEvent;
+import com.fintrack.company_service.kafka.producer.CompanyCreatedEvent;
+import com.fintrack.company_service.kafka.producer.CompanyEventProducer;
 import com.fintrack.company_service.model.Company;
 import com.fintrack.company_service.model.Sector;
 import com.fintrack.company_service.repository.CompanyRepository;
@@ -20,6 +22,7 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final SectorRepository sectorRepository;
+    private final CompanyEventProducer companyEventProducer;
 
     @Autowired
     private CategoryService categoryService;
@@ -44,6 +47,15 @@ public class CompanyService {
 
         // Seed default categories for the new company
         categoryService.seedDefaultCategories(saved.getId());
+
+        companyEventProducer.publishCompanyCreated(
+                CompanyCreatedEvent.builder()
+                        .userId(event.getUserId())
+                        .companyId(saved.getId())
+                        .build()
+        );
+
+        log.info("Published company.created event for companyId: {}", saved.getId());
     }
 
     public List<String> getAllSectors() {
@@ -52,6 +64,7 @@ public class CompanyService {
                 .map(Sector::getName)
                 .toList();
     }
+
 
     //"BAKERY" or "bakery" or "bAkErY" → "Bakery"
     private String normalizeSector(String sector) {

@@ -13,9 +13,6 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
 
   security:
@@ -24,9 +21,8 @@ spring:
         jwt:
           issuer-uri: http://localhost:9090/realms/fintrack360
 
-
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093
     consumer:
       group-id: company-service-group
       auto-offset-reset: earliest
@@ -35,6 +31,11 @@ spring:
       properties:
         spring.json.trusted.packages: "com.fintrack.*"
         spring.json.value.default.type: "com.fintrack.company_service.kafka.consumer.CompanyRegistrationEvent"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
 
 kafka:
   topics:
