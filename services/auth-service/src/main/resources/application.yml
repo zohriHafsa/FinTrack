@@ -23,12 +23,20 @@ spring:
           issuer-uri: http://localhost:9090/realms/fintrack360
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
+    consumer:                                                          # ← ADD THIS
+      group-id: auth-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: false
 
 kafka:
   topics:
@@ -37,6 +45,7 @@ kafka:
 keycloak:
   auth-server-url: http://localhost:9090
   realm: fintrack360
+  client-id: fintrack360-angular
   admin:
     username: admin
     password: admin12

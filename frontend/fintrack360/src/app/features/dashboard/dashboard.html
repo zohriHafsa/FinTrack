@@ -1,0 +1,91 @@
+<div class="dashboard">
+
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div>
+      <h1>Owner overview</h1>
+      <p>Atlas Group · {{ getCurrentMonth() }}</p>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-label">Income this month</span>
+        <div class="stat-icon income-icon">
+          <span class="material-icons">trending_up</span>
+        </div>
+      </div>
+      <div class="stat-value">{{ formatAmount(totalIncome) }}</div>
+      <div class="stat-sub positive">+14.3% vs last month</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-label">Expenses this month</span>
+        <div class="stat-icon expense-icon">
+          <span class="material-icons">trending_down</span>
+        </div>
+      </div>
+      <div class="stat-value">{{ formatAmount(totalExpenses) }}</div>
+      <div class="stat-sub negative">+9.9% vs last month</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-label">Net cash flow</span>
+        <div class="stat-icon cashflow-icon">
+          <span class="material-icons">north_east</span>
+        </div>
+      </div>
+      <div class="stat-value">{{ formatAmount(netCashFlow) }}</div>
+      <div class="stat-sub positive">Positive</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span class="stat-label">Overdue invoices</span>
+        <div class="stat-icon overdue-icon">
+          <span class="material-icons">warning</span>
+        </div>
+      </div>
+      <div class="stat-value">{{ overdueCount }}</div>
+      <div class="stat-sub negative">{{ formatAmount(overdueAmount) }} outstanding</div>
+    </div>
+  </div>
+
+  <!-- Chart + AI Insight -->
+  <div class="bottom-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <h3>Income vs expense</h3>
+          <p>Last 6 months</p>
+        </div>
+        <div class="chart-legend">
+          <span class="legend-item">
+            <span class="dot dark"></span> Income
+          </span>
+          <span class="legend-item">
+            <span class="dot teal"></span> Expense
+          </span>
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas #chartCanvas></canvas>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-header">
+        <span class="material-icons">auto_awesome</span>
+        <span>AI insight of the day</span>
+      </div>
+      <h3>Marketing spend up 32% vs last month</h3>
+      <p>Monitor your expenses carefully to maintain healthy cash flow.</p>
+      <button class="insight-btn">See all insights</button>
+    </div>
+  </div>
+
+</div>

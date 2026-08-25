@@ -7,11 +7,12 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9090/realms/fintrack360
+          jwk-set-uri: http://localhost:9090/realms/fintrack360/protocol/openid-connect/certs
 
   cloud:
     gateway:
       globalcors:
-        cors-configurations:
+        corsConfigurations:
           '[/**]':
             allowedOrigins:
               - "http://localhost:4200"
@@ -21,8 +22,11 @@ spring:
               - PUT
               - DELETE
               - OPTIONS
-            allowedHeaders: "*"
+            allowedHeaders:
+              - "*"
             allowCredentials: true
+
+      
       routes:
         - id: auth-service
           uri: http://localhost:8081
@@ -32,7 +36,7 @@ spring:
         - id: company-service
           uri: http://localhost:8082
           predicates:
-            - Path=/api/companies/**, /api/clients/**, /api/categories/**
+            - Path=/api/companies/**
 
         - id: transaction-service
           uri: http://localhost:8083
@@ -44,10 +48,10 @@ spring:
           predicates:
             - Path=/api/invoices/**
 
-        - id: budget-notification-service
+        - id: budget-service
           uri: http://localhost:8085
           predicates:
-            - Path=/api/budgets/**, /api/notifications/**
+            - Path=/api/budgets/**,/api/notifications/**,/api/alert-preferences/**
 
         - id: ai-insights-service
           uri: http://localhost:8086
@@ -59,5 +63,5 @@ server:
 
 logging:
   level:
-    com.fintrack360: DEBUG
     org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG

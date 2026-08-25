@@ -1,12 +1,15 @@
 package com.fintrack.company_service.service;
 
 import com.fintrack.company_service.kafka.consumer.CompanyRegistrationEvent;
+import com.fintrack.company_service.kafka.producer.CompanyCreatedEvent;
+import com.fintrack.company_service.kafka.producer.CompanyEventProducer;
 import com.fintrack.company_service.model.Company;
 import com.fintrack.company_service.model.Sector;
 import com.fintrack.company_service.repository.CompanyRepository;
 import com.fintrack.company_service.repository.SectorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,32 +22,40 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final SectorRepository sectorRepository;
+    private final CompanyEventProducer companyEventProducer;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Transactional
     public void createCompanyFromEvent(CompanyRegistrationEvent event) {
-
-        //Normalize sector
         String normalizedSector = normalizeSector(event.getSector());
-        log.info("Creating company: {} in sector: {}", event.getCompanyName(), normalizedSector);
 
-        //Check if sector exists, create if not
         sectorRepository.findByName(normalizedSector)
-                .orElseGet(() -> {
-                    log.info("New sector detected, adding: {}", normalizedSector);
-                    return sectorRepository.save(
-                            Sector.builder().name(normalizedSector).build()
-                    );
-                });
+                .orElseGet(() -> sectorRepository.save(
+                        Sector.builder().name(normalizedSector).build()
+                ));
 
-        //Create company
         Company company = Company.builder()
                 .name(event.getCompanyName())
                 .sector(normalizedSector)
                 .ownerId(event.getUserId())
                 .build();
 
-        companyRepository.save(company);
+        Company saved = companyRepository.save(company);
         log.info("Company created successfully for owner: {}", event.getUserId());
+
+        // Seed default categories for the new company
+        categoryService.seedDefaultCategories(saved.getId());
+
+        companyEventProducer.publishCompanyCreated(
+                CompanyCreatedEvent.builder()
+                        .userId(event.getUserId())
+                        .companyId(saved.getId())
+                        .build()
+        );
+
+        log.info("Published company.created event for companyId: {}", saved.getId());
     }
 
     public List<String> getAllSectors() {
@@ -53,6 +64,7 @@ public class CompanyService {
                 .map(Sector::getName)
                 .toList();
     }
+
 
     //"BAKERY" or "bakery" or "bAkErY" → "Bakery"
     private String normalizeSector(String sector) {

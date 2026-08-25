@@ -1,0 +1,83 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Invoices</h1>
+      <p>Track paid, unpaid, and overdue invoices.</p>
+    </div>
+    <button class="btn-primary">
+      <span class="material-icons">add</span>
+      Create invoice
+    </button>
+  </div>
+
+  <!-- Search + Filters -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="material-icons">search</span>
+      <input
+        type="text"
+        placeholder="Search client or invoice ID..."
+        [(ngModel)]="searchQuery"
+        (input)="applySearch()">
+    </div>
+
+    <div class="status-filters">
+      @for (filter of statusFilters; track filter) {
+        <button
+          [class.active]="selectedStatus === filter"
+          (click)="filterByStatus(filter)">
+          {{ filter === 'ALL' ? 'All' : filter | titlecase }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    @if (loading) {
+      <div class="loading">Loading invoices...</div>
+    } @else if (filteredInvoices.length === 0) {
+      <div class="empty">No invoices found.</div>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Invoice</th>
+            <th>Client</th>
+            <th>Issued</th>
+            <th>Due</th>
+            <th>Status</th>
+            <th>Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (invoice of filteredInvoices; track invoice.id) {
+            <tr>
+              <td class="invoice-id">INV-{{ invoice.id.slice(-3) }}</td>
+              <td class="client-name">{{ invoice.clientId }}</td>
+              <td>{{ invoice.issueDate }}</td>
+              <td>{{ invoice.dueDate }}</td>
+              <td>
+                <span [class]="'status-badge ' + getStatusClass(invoice.status)">
+                  {{ invoice.status | titlecase }}
+                </span>
+              </td>
+              <td class="amount">{{ formatAmount(invoice.amount) }}</td>
+              <td>
+                @if (invoice.status === 'UNPAID') {
+                  <button class="btn-pay" (click)="markAsPaid(invoice)">
+                    Mark paid
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+</div>

@@ -4,15 +4,12 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5437/budget_db
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    username: fintrack360
+    password: fintrack360_pass
 
   jpa:
     hibernate:
       ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
 
   security:
@@ -22,18 +19,34 @@ spring:
           issuer-uri: http://localhost:9090/realms/fintrack360
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093
     consumer:
       group-id: budget-notification-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: "com.fintrack360.*"
+        spring.json.trusted.packages: "com.fintrack.*"
+        spring.json.use.type.headers: false
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+kafka:
+  topics:
+    transaction-created: transaction.created
+    invoice-status-changed: invoice.status.changed
+    budget-exceeded: budget.exceeded
 
 server:
   port: 8085
 
 logging:
   level:
-    com.fintrack360: DEBUG
+    com.fintrack: DEBUG

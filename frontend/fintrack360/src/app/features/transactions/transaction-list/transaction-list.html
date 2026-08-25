@@ -1,0 +1,137 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Transactions</h1>
+      <p>Record and track all income and expenses.</p>
+    </div>
+    <button class="btn-primary" (click)="showCreateForm = !showCreateForm">
+      <span class="material-icons">add</span>
+      New transaction
+    </button>
+  </div>
+
+  <!-- Create Form -->
+  @if (showCreateForm) {
+    <div class="create-form">
+      <h3>New Transaction</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Type</label>
+          <select [(ngModel)]="newTransaction.type">
+            <option value="INCOME">Income</option>
+            <option value="EXPENSE">Expense</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount (MAD)</label>
+          <input type="number" [(ngModel)]="newTransaction.amount"
+                 placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" [(ngModel)]="newTransaction.description"
+                 placeholder="Description...">
+        </div>
+        <div class="form-group">
+          <label>Payment Method</label>
+          <select [(ngModel)]="newTransaction.paymentMethod">
+            @for (method of paymentMethods; track method) {
+              <option [value]="method">{{ method | titlecase }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Category ID</label>
+          <input type="text" [(ngModel)]="newTransaction.categoryId"
+                 placeholder="Category UUID">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" [(ngModel)]="newTransaction.date">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-secondary" (click)="showCreateForm = false">
+          Cancel
+        </button>
+        <button class="btn-primary" (click)="createTransaction()">
+          Save
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Search + Filters -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="material-icons">search</span>
+      <input
+        type="text"
+        placeholder="Search transactions..."
+        [(ngModel)]="searchQuery"
+        (input)="applySearch()">
+    </div>
+    <div class="type-filters">
+      @for (filter of typeFilters; track filter) {
+        <button
+          [class.active]="selectedType === filter"
+          (click)="filterByType(filter)">
+          {{ filter === 'ALL' ? 'All' : filter | titlecase }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    @if (loading) {
+      <div class="loading">Loading transactions...</div>
+    } @else if (filteredTransactions.length === 0) {
+      <div class="empty">No transactions found.</div>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Payment</th>
+            <th>Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (transaction of filteredTransactions; track transaction.id) {
+            <tr>
+              <td class="date">{{ transaction.date }}</td>
+              <td class="description">
+                {{ transaction.description || 'No description' }}
+              </td>
+              <td>
+                <span [class]="'type-badge ' + getTypeClass(transaction.type)">
+                  {{ transaction.type | titlecase }}
+                </span>
+              </td>
+              <td class="payment">
+                {{ transaction.paymentMethod | titlecase }}
+              </td>
+              <td [class]="'amount ' + getTypeClass(transaction.type)">
+                {{ transaction.type === 'INCOME' ? '+' : '-' }}
+                {{ formatAmount(transaction.amount) }}
+              </td>
+              <td>
+                <button class="btn-delete"
+                        (click)="deleteTransaction(transaction.id)">
+                  <span class="material-icons">delete</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+</div>
