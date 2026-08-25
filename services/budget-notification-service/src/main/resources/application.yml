@@ -19,7 +19,7 @@ spring:
           issuer-uri: http://localhost:9090/realms/fintrack360
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093
     consumer:
       group-id: budget-notification-group
       auto-offset-reset: earliest
