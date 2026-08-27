@@ -6,11 +6,16 @@
       <h1>Invoices</h1>
       <p>Track paid, unpaid, and overdue invoices.</p>
     </div>
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="openCreateModal()" [disabled]="!companyId">
       <span class="material-icons">add</span>
       Create invoice
     </button>
   </div>
+
+  <!-- Account not ready -->
+  @if (accountError) {
+    <div class="empty">{{ accountError }}</div>
+  }
 
   <!-- Search + Filters -->
   <div class="toolbar">
@@ -57,7 +62,7 @@
           @for (invoice of filteredInvoices; track invoice.id) {
             <tr>
               <td class="invoice-id">INV-{{ invoice.id.slice(-3) }}</td>
-              <td class="client-name">{{ invoice.clientId }}</td>
+              <td class="client-name">{{ getClientName(invoice.clientId) }}</td>
               <td>{{ invoice.issueDate }}</td>
               <td>{{ invoice.dueDate }}</td>
               <td>
@@ -81,3 +86,65 @@
   </div>
 
 </div>
+
+<!-- Create Modal -->
+@if (showCreateModal) {
+  <div class="modal-overlay" (click)="closeCreateModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Create invoice</h2>
+        <button class="close-btn" (click)="closeCreateModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Client</label>
+          <select [(ngModel)]="newInvoice.clientId" (change)="onClientSelect($event)">
+            <option value="" disabled>Select a client</option>
+            @for (client of clients; track client.id) {
+              <option [value]="client.id">{{ client.name }}</option>
+            }
+            <option value="custom">+ Add new client</option>
+          </select>
+
+          @if (showCustomClient) {
+            <input type="text" [(ngModel)]="newClient.name" placeholder="Client name" class="mt-2">
+            <input type="email" [(ngModel)]="newClient.email" placeholder="Client email" class="mt-2">
+            <input type="text" [(ngModel)]="newClient.phone" placeholder="Client phone (optional)" class="mt-2">
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Amount (MAD)</label>
+          <input type="number" [(ngModel)]="newInvoice.amount" placeholder="Enter amount" min="0">
+        </div>
+
+        <div class="form-group">
+          <label>Issue date</label>
+          <input type="date" [(ngModel)]="newInvoice.issueDate">
+        </div>
+
+        <div class="form-group">
+          <label>Due date</label>
+          <input type="date" [(ngModel)]="newInvoice.dueDate">
+        </div>
+
+        <div class="form-group">
+          <label>Notes</label>
+          <input type="text" [(ngModel)]="newInvoice.notes" placeholder="Optional notes">
+        </div>
+
+        @if (errorMessage) {
+          <div class="error-banner">{{ errorMessage }}</div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeCreateModal()">Cancel</button>
+        <button class="btn-save" (click)="saveInvoice()" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save invoice' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

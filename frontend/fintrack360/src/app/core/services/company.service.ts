@@ -35,6 +35,10 @@ export class CompanyService {
     return this.http.get<Client[]>(`${this.apiUrl}/${companyId}/clients`);
   }
 
+  createClient(companyId: string, client: { name: string, email: string, phone?: string }): Observable<Client> {
+    return this.http.post<Client>(`${this.apiUrl}/${companyId}/clients`, client);
+  }
+
   getSectors(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/sectors`);
   }
