@@ -1,1 +1,183 @@
-<p>budget-list works!</p>
+<div class="budgets-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Budgets</h1>
+      <p>Set monthly limits per category and monitor spend.</p>
+    </div>
+    <button class="btn-create" (click)="openCreateModal()" [disabled]="!companyId">
+      + Create budget
+    </button>
+  </div>
+
+  <!-- Account not ready -->
+  @if (accountError) {
+    <div class="empty-state">
+      <p>{{ accountError }}</p>
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading">Loading budgets...</div>
+  }
+
+  <!-- Budget Cards Grid -->
+  @if (!loading && !accountError) {
+    <div class="budgets-grid">
+      @for (budget of budgets; track budget.id) {
+        <div class="budget-card">
+
+          <!-- Card Header -->
+          <div class="card-header">
+            <div>
+              <h3>{{ getCategoryName(budget.categoryId) }}</h3>
+              <span class="period">{{ budget.period | titlecase }}</span>
+            </div>
+            @if (getBudgetStatus(budget)) {
+              <span class="badge" [ngClass]="getBudgetStatusClass(budget)">
+                {{ getBudgetStatus(budget) }}
+              </span>
+            }
+          </div>
+
+          <!-- Amounts -->
+          <div class="amounts">
+            <span class="current-spend">
+              {{ budget.currentSpend | number:'1.0-0' }} MAD
+            </span>
+            <span class="limit">
+              of {{ budget.limitAmount | number:'1.0-0' }} MAD
+            </span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-bar-container">
+            <div
+              class="progress-bar"
+              [style.width.%]="getSpendPercentage(budget)"
+              [style.background-color]="getProgressColor(budget)">
+            </div>
+          </div>
+
+          <!-- Remaining -->
+          <div class="remaining">
+            @if (getRemainingAmount(budget) >= 0) {
+              {{ getRemainingAmount(budget) | number:'1.0-0' }} MAD remaining
+            } @else {
+              Over by {{ (getRemainingAmount(budget) * -1) | number:'1.0-0' }} MAD
+            }
+          </div>
+
+          <!-- Actions -->
+          <div class="card-actions">
+            <button class="btn-edit" (click)="openEditModal(budget)">Edit</button>
+            <button class="btn-remove" (click)="deleteBudget(budget.id)">Remove</button>
+          </div>
+
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (budgets.length === 0) {
+        <div class="empty-state">
+          <p>No budgets yet. Create your first budget!</p>
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+<!-- Create Modal -->
+@if (showCreateModal) {
+  <div class="modal-overlay" (click)="closeCreateModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Create budget</h2>
+        <button class="close-btn" (click)="closeCreateModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+  <label>Category</label>
+  <select [(ngModel)]="newBudget.categoryId" (change)="onCategorySelect($event)">
+    <option value="" disabled>Select a category</option>
+    @for (cat of categories; track cat.id) {
+      <option [value]="cat.id">{{ cat.name }}</option>
+    }
+    <option value="custom">+ Add custom category</option>
+  </select>
+
+  @if (showCustomCategory) {
+    <input
+      type="text"
+      [(ngModel)]="customCategoryName"
+      placeholder="Enter category name"
+      class="mt-2">
+  }
+</div>
+
+        <div class="form-group">
+          <label>Limit (MAD)</label>
+          <input
+            type="number"
+            [(ngModel)]="newBudget.limitAmount"
+            placeholder="Enter amount"
+            min="0">
+        </div>
+
+        <div class="form-group">
+          <label>Period</label>
+          <select [(ngModel)]="newBudget.period" (change)="onPeriodChange()">
+            <option value="MONTHLY">Monthly</option>
+            <option value="QUARTERLY">Quarterly</option>
+            <option value="ANNUAL">Annual</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeCreateModal()">Cancel</button>
+        <button class="btn-save" (click)="saveBudget()">Save budget</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Edit Modal -->
+@if (showEditModal) {
+  <div class="modal-overlay" (click)="closeEditModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Edit budget</h2>
+        <button class="close-btn" (click)="closeEditModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Limit (MAD)</label>
+          <input
+            type="number"
+            [(ngModel)]="editBudget.limitAmount"
+            min="0">
+        </div>
+
+        <div class="form-group">
+          <label>Period</label>
+          <select [(ngModel)]="editBudget.period">
+            <option value="MONTHLY">Monthly</option>
+            <option value="QUARTERLY">Quarterly</option>
+            <option value="ANNUAL">Annual</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeEditModal()">Cancel</button>
+        <button class="btn-save" (click)="updateBudget()">Save changes</button>
+      </div>
+    </div>
+  </div>
+}

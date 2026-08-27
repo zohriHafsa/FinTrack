@@ -19,6 +19,12 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleUserNotFound(
+            UserNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleRuntime(
             RuntimeException ex) {

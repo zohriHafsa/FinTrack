@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import com.fintrack.exception.UserNotFoundException;
 import com.fintrack.model.User;
 import com.fintrack.repository.UserRepository;
 
@@ -37,7 +38,8 @@ public class AuthController {
             @AuthenticationPrincipal Jwt jwt) {
         String keycloakId = jwt.getSubject();
         User user = userRepository.findByKeycloakId(keycloakId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(
+                        "No account found for this login. Please register first."));
         return ResponseEntity.ok(RegisterResponse.builder()
                 .userId(user.getId())
                 .email(user.getEmail())

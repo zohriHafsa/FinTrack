@@ -1,4 +1,4 @@
-<div class="app-layout" *ngIf="isAuthenticated; else loginTemplate">
+<div class="app-layout" *ngIf="isAuthenticated; else publicOutlet">
   <app-sidebar></app-sidebar>
   <div class="main-content">
     <app-navbar [pageTitle]="'FinTrack360'"></app-navbar>
@@ -8,12 +8,6 @@
   </div>
 </div>
 
-<ng-template #loginTemplate>
-  <div class="login-screen">
-    <h1>FinTrack360</h1>
-    <p>Financial management for Moroccan SMEs</p>
-    <button class="login-btn" (click)="login()">
-      Login with Keycloak
-    </button>
-  </div>
+<ng-template #publicOutlet>
+  <router-outlet></router-outlet>
 </ng-template>
