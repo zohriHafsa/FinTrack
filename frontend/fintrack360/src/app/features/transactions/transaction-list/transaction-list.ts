@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService, Transaction, TransactionPage, CreateTransactionRequest } from '../../../core/services/transaction.service';
 import { UserService } from '../../../core/services/user.service';
+import { CompanyService, Category } from '../../../core/services/company.service';
 
 @Component({
   selector: 'app-transaction-list',
@@ -15,12 +16,15 @@ export class TransactionList implements OnInit {
 
   transactions: Transaction[] = [];
   filteredTransactions: Transaction[] = [];
+  categories: Category[] = [];
   selectedType: string = 'ALL';
   searchQuery: string = '';
   loading = false;
+  saving = false;
   companyId = '';
   userId = '';
   showCreateForm = false;
+  errorMessage = '';
 
   typeFilters = ['ALL', 'INCOME', 'EXPENSE'];
 
@@ -39,6 +43,7 @@ export class TransactionList implements OnInit {
 
   constructor(
     private transactionService: TransactionService,
+    private companyService: CompanyService,
     private userService: UserService
   ) {}
 
@@ -49,9 +54,24 @@ export class TransactionList implements OnInit {
         this.userId = user.userId;
         this.newTransaction.companyId = user.companyId;
         this.newTransaction.createdBy = user.userId;
-        this.loadTransactions();
+        if (this.companyId) {
+          this.loadTransactions();
+          this.loadCategories();
+        }
       },
       error: (err: any) => console.error('Error loading user:', err)
+    });
+  }
+
+  loadCategories(): void {
+    this.companyService.getCategories(this.companyId).subscribe({
+      next: (categories) => {
+        this.categories = categories;
+        if (!this.newTransaction.categoryId && categories.length > 0) {
+          this.newTransaction.categoryId = categories[0].id;
+        }
+      },
+      error: (err: any) => console.error('Error loading categories:', err)
     });
   }
 
@@ -91,14 +111,31 @@ export class TransactionList implements OnInit {
   }
 
   createTransaction(): void {
+    this.errorMessage = '';
+
+    if (!this.newTransaction.categoryId) {
+      this.errorMessage = 'Please select a category.';
+      return;
+    }
+    if (!this.newTransaction.amount || this.newTransaction.amount <= 0) {
+      this.errorMessage = 'Please enter an amount greater than 0.';
+      return;
+    }
+
+    this.saving = true;
     this.transactionService.createTransaction(this.newTransaction)
       .subscribe({
         next: () => {
+          this.saving = false;
           this.showCreateForm = false;
           this.resetForm();
           this.loadTransactions();
         },
-        error: (err: any) => console.error('Error creating transaction:', err)
+        error: (err: any) => {
+          console.error('Error creating transaction:', err);
+          this.saving = false;
+          this.errorMessage = err?.error?.message || 'Could not create transaction. Please try again.';
+        }
       });
   }
 
@@ -111,9 +148,10 @@ export class TransactionList implements OnInit {
   }
 
   resetForm(): void {
+    this.errorMessage = '';
     this.newTransaction = {
       companyId: this.companyId,
-      categoryId: '',
+      categoryId: this.categories.length > 0 ? this.categories[0].id : '',
       amount: 0,
       type: 'EXPENSE',
       description: '',

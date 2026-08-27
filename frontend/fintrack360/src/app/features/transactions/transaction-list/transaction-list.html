@@ -43,21 +43,33 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Category ID</label>
-          <input type="text" [(ngModel)]="newTransaction.categoryId"
-                 placeholder="Category UUID">
+          <label>Category</label>
+          <select [(ngModel)]="newTransaction.categoryId">
+            <option value="" disabled>Select a category</option>
+            @for (cat of categories; track cat.id) {
+              <option [value]="cat.id">{{ cat.name }}</option>
+            }
+          </select>
+          @if (categories.length === 0) {
+            <span class="hint">No categories yet for this company.</span>
+          }
         </div>
         <div class="form-group">
           <label>Date</label>
           <input type="date" [(ngModel)]="newTransaction.date">
         </div>
       </div>
+
+      @if (errorMessage) {
+        <div class="error-banner">{{ errorMessage }}</div>
+      }
+
       <div class="form-actions">
         <button class="btn-secondary" (click)="showCreateForm = false">
           Cancel
         </button>
-        <button class="btn-primary" (click)="createTransaction()">
-          Save
+        <button class="btn-primary" (click)="createTransaction()" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save' }}
         </button>
       </div>
     </div>

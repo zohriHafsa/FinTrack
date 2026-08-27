@@ -1,5 +1,7 @@
 package com.fintrack.ai_insights_service.controller;
 
+import com.fintrack.ai_insights_service.dto.request.ChatRequest;
+import com.fintrack.ai_insights_service.dto.response.ChatResponse;
 import com.fintrack.ai_insights_service.dto.response.InsightResponse;
 import com.fintrack.ai_insights_service.model.InsightType;
 import com.fintrack.ai_insights_service.service.InsightGenerationService;
@@ -69,6 +71,21 @@ public class InsightController {
         insightGenerationService.generateInsightsForCompany(companyId);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/chat")
+    @PreAuthorize("@permissionService.hasAccessToCompany(#companyId)")
+    public ResponseEntity<ChatResponse> chat(
+            @RequestParam UUID companyId,
+            @RequestBody ChatRequest request) {
+        log.info("POST /api/insights/chat - companyId: {}", companyId);
+
+        if (request.getQuestion() == null || request.getQuestion().isBlank()) {
+            throw new IllegalArgumentException("Question is required");
+        }
+
+        String answer = insightGenerationService.answerQuestion(companyId, request.getQuestion());
+        return ResponseEntity.ok(ChatResponse.builder().answer(answer).build());
     }
 
     @DeleteMapping("/{id}")

@@ -57,6 +57,25 @@ public class InsightGenerationService {
     private String buildPrompt(UUID companyId, Map<String, Object> monthlyData,
                                JsonNode recentTransactions, Map<String, Object> invoiceData) {
 
+        String financialSummary = buildFinancialSummary(monthlyData, invoiceData);
+
+        return String.format("""
+                You are a financial advisor for Moroccan SMEs. Analyze this financial data for the company and generate exactly 3 insights.
+
+                %s
+
+                Respond ONLY with valid JSON in this exact format (no markdown, no code blocks, just raw JSON):
+                {
+                  "insights": [
+                    {"title": "short title", "content": "detailed insight", "type": "TREND"},
+                    {"title": "short title", "content": "detailed insight", "type": "SPENDING_ANOMALY"},
+                    {"title": "short title", "content": "detailed insight", "type": "FORECAST"}
+                  ]
+                }
+                """, financialSummary);
+    }
+
+    private String buildFinancialSummary(Map<String, Object> monthlyData, Map<String, Object> invoiceData) {
         double totalIncome = monthlyData.containsKey("totalIncome")
                 ? ((Number) monthlyData.get("totalIncome")).doubleValue()
                 : 0.0;
@@ -69,24 +88,33 @@ public class InsightGenerationService {
         int overdueCount = ((List<?>) invoiceData.getOrDefault("overdue", new ArrayList<>())).size();
 
         return String.format("""
-                You are a financial advisor for Moroccan SMEs. Analyze this financial data for the company and generate exactly 3 insights.
-                
                 Financial data (in MAD):
                 - Total income this month: %.2f MAD
                 - Total expenses this month: %.2f MAD
                 - Net cash flow: %.2f MAD
                 - Top expense categories: %s
-                - Number of overdue invoices: %d
-                
-                Respond ONLY with valid JSON in this exact format (no markdown, no code blocks, just raw JSON):
-                {
-                  "insights": [
-                    {"title": "short title", "content": "detailed insight", "type": "TREND"},
-                    {"title": "short title", "content": "detailed insight", "type": "SPENDING_ANOMALY"},
-                    {"title": "short title", "content": "detailed insight", "type": "FORECAST"}
-                  ]
-                }
-                """, totalIncome, totalExpenses, netCashFlow, topCategories, overdueCount);
+                - Number of overdue invoices: %d""",
+                totalIncome, totalExpenses, netCashFlow, topCategories, overdueCount);
+    }
+
+    public String answerQuestion(UUID companyId, String question) {
+        log.info("Answering chat question for company: {}", companyId);
+
+        Map<String, Object> monthlyData = transactionDataClient.getMonthlyFinancialData(companyId);
+        Map<String, Object> invoiceData = transactionDataClient.getInvoiceData(companyId);
+        String financialSummary = buildFinancialSummary(monthlyData, invoiceData);
+
+        String prompt = String.format("""
+                You are a financial advisor for a Moroccan SME. Here is the company's current financial data:
+
+                %s
+
+                User question: %s
+
+                Answer concisely, in the same language as the question, using the data above.
+                """, financialSummary, question);
+
+        return claudeApiService.generateInsights(prompt);
     }
 
     private List<Insight> parseClaudeResponse(String claudeResponse, UUID companyId) {

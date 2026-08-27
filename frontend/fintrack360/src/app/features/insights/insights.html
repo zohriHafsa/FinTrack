@@ -1,1 +1,101 @@
-<p>insights works!</p>
+<div class="insights-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Insights feed</h1>
+      <p>Anomalies, forecasts, and tips generated from your data.</p>
+    </div>
+    <button class="btn-generate" (click)="generateInsights()" [disabled]="generating">
+      @if (generating) {
+        <span>Generating...</span>
+      } @else {
+        <span>✨ Generate Insights</span>
+      }
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading insights...</p>
+    </div>
+  }
+
+  <!-- Insights Feed -->
+  @if (!loading) {
+    <div class="insights-feed">
+      @for (insight of insights; track insight.id) {
+        <div class="insight-card">
+          <div class="card-header">
+            <span class="badge" [ngClass]="getTypeBadgeClass(insight.type)">
+              {{ getTypeLabel(insight.type) }}
+            </span>
+            <span class="ai-generated">✨ AI generated</span>
+          </div>
+          <h3>{{ insight.title }}</h3>
+          <p>{{ insight.content }}</p>
+        </div>
+      }
+
+      @if (insights.length === 0) {
+        <div class="empty-state">
+          <p>✨ No insights yet.</p>
+          <p>Click "Generate Insights" to analyze your financial data.</p>
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+<!-- Chat Button (floating) -->
+<button class="chat-fab" (click)="toggleChat()">
+  @if (isChatOpen) {
+    <span>✕</span>
+  } @else {
+    <span>🤖</span>
+  }
+</button>
+
+<!-- Chat Window -->
+@if (isChatOpen) {
+  <div class="chat-window">
+    <div class="chat-header">
+      <span>🤖 Ask AI</span>
+    </div>
+
+    <div class="chat-messages">
+      @for (msg of chatMessages; track $index) {
+        <div class="message" [ngClass]="msg.role === 'ai' ? 'message-ai' : 'message-user'">
+          @if (msg.role === 'ai') {
+            <div class="ai-avatar">🤖</div>
+          }
+          <div class="message-bubble">{{ msg.text }}</div>
+          @if (msg.role === 'user') {
+            <div class="user-avatar">👤</div>
+          }
+        </div>
+      }
+
+      @if (chatLoading) {
+        <div class="message message-ai">
+          <div class="ai-avatar">🤖</div>
+          <div class="message-bubble typing">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="chat-input-area">
+      <input
+        type="text"
+        [(ngModel)]="chatInput"
+        placeholder="Ask a question..."
+        (keydown)="onChatKeyDown($event)">
+      <button (click)="sendMessage()">➤</button>
+    </div>
+  </div>
+}
