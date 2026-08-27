@@ -24,6 +24,7 @@ export class BudgetList implements OnInit {
   selectedBudget: Budget | null = null;
   showCustomCategory = false;
   customCategoryName = '';
+  saving = false;
 
   // Create form
   newBudget: CreateBudgetRequest = {
@@ -177,14 +178,25 @@ export class BudgetList implements OnInit {
   }
 
   closeCreateModal(): void {
-    this.showCreateModal = false;
-  }
+  this.showCreateModal = false;
+  this.saving = false;  
+  this.showCustomCategory = false;
+  this.customCategoryName = '';
+}
 
-  saveBudget(): void {
-  if (!this.companyId) return;
+
+  
+saveBudget(): void {
+  if (this.saving) return;  
+  if (!this.newBudget.categoryId || this.newBudget.limitAmount <= 0) return;
+
+  this.saving = true;
+
   if (this.showCustomCategory) {
-    // First create the category then create budget
-    if (!this.customCategoryName.trim()) return;
+    if (!this.customCategoryName.trim()) {
+      this.saving = false;
+      return;
+    }
 
     this.companyService.createCategory(this.companyId, {
       name: this.customCategoryName.trim(),
@@ -195,7 +207,10 @@ export class BudgetList implements OnInit {
         this.newBudget.categoryId = category.id;
         this.createBudgetRequest();
       },
-      error: (err) => console.error('Error creating category', err)
+      error: (err) => {
+        console.error('Error creating category', err);
+        this.saving = false;
+      }
     });
   } else {
     this.createBudgetRequest();
@@ -203,16 +218,18 @@ export class BudgetList implements OnInit {
 }
 
 private createBudgetRequest(): void {
-  if (!this.newBudget.categoryId || this.newBudget.limitAmount <= 0) return;
-
   this.budgetService.createBudget(this.newBudget).subscribe({
     next: () => {
-      this.loadBudgets();
-      this.closeCreateModal();
+      this.saving = false;
+      this.closeCreateModal();        
       this.showCustomCategory = false;
       this.customCategoryName = '';
+      this.loadBudgets();             
     },
-    error: (err) => console.error('Error creating budget', err)
+    error: (err) => {
+      console.error('Error creating budget', err);
+      this.saving = false;
+    }
   });
 }
 

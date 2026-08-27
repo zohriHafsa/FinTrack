@@ -140,7 +140,7 @@
 
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeCreateModal()">Cancel</button>
-        <button class="btn-save" (click)="saveBudget()">Save budget</button>
+        <button class="btn-save" (click)="saveBudget()" [disabled]="saving">{{ saving ? 'Saving...' : 'Save budget' }}</button>
       </div>
     </div>
   </div>
