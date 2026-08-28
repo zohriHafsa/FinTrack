@@ -37,7 +37,7 @@ export class NotificationsComponent implements OnInit {
         this.notifications = notifications;
         this.loading = false;
         // Update unread count
-        const unread = notifications.filter((n: any) => !n.read).length;
+        const unread = notifications.filter((n: any) => !n.isRead).length;
         this.notificationService.updateUnreadCount(unread);
       },
       error: (err: any) => {
@@ -48,12 +48,12 @@ export class NotificationsComponent implements OnInit {
   }
 
   markAsRead(notification: Notification): void {
-    if (notification.read) return;
+    if (notification.isRead) return;
 
     this.notificationService.markAsRead(notification.id).subscribe({
       next: () => {
-        notification.read = true;
-        const unread = this.notifications.filter(n => !n.read).length;
+        notification.isRead = true;
+        const unread = this.notifications.filter(n => !n.isRead).length;
         this.notificationService.updateUnreadCount(unread);
       }
     });
@@ -62,10 +62,20 @@ export class NotificationsComponent implements OnInit {
   markAllAsRead(): void {
     this.notificationService.markAllAsRead(this.userId).subscribe({
       next: () => {
-        this.notifications.forEach(n => n.read = true);
+        this.notifications.forEach(n => n.isRead = true);
         this.notificationService.updateUnreadCount(0);
       }
     });
+  }
+
+  getTypeLabel(type: string): string {
+    switch (type) {
+      case 'BUDGET_EXCEEDED': return 'Budget exceeded';
+      case 'INVOICE_OVERDUE': return 'Invoice overdue';
+      case 'PAYMENT_RECEIVED': return 'Payment received';
+      case 'WEEKLY_SUMMARY': return 'Weekly summary';
+      default: return 'Notification';
+    }
   }
 
   getTypeIcon(type: string): string {

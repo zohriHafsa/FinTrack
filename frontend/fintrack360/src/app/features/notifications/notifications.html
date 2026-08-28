@@ -24,7 +24,7 @@
       @for (notification of notifications; track notification.id) {
         <div
           class="notification-item"
-          [ngClass]="{ 'unread': !notification.read }"
+          [ngClass]="{ 'unread': !notification.isRead }"
           (click)="markAsRead(notification)">
 
           <div class="notif-icon" [style.background]="getTypeColor(notification.type) + '20'">
@@ -35,13 +35,13 @@
 
           <div class="notif-content">
             <div class="notif-header">
-              <h4>{{ notification.title }}</h4>
+              <h4>{{ getTypeLabel(notification.type) }}</h4>
               <span class="time">{{ getTimeAgo(notification.createdAt) }}</span>
             </div>
             <p>{{ notification.message }}</p>
           </div>
 
-          @if (!notification.read) {
+          @if (!notification.isRead) {
             <div class="unread-dot"></div>
           }
         </div>

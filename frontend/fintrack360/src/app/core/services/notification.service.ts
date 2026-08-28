@@ -8,9 +8,8 @@ export interface Notification {
   userId: string;
   companyId: string;
   type: string;
-  title: string;
   message: string;
-  read: boolean;
+  isRead: boolean;
   createdAt: string;
 }
 
