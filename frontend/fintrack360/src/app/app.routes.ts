@@ -69,5 +69,20 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/unauthorized/unauthorized')
         .then(m => m.Unauthorized)
-  }
+  },
+  {
+    path: 'notifications',
+    loadComponent: () =>
+      import('./features/notifications/notifications')
+        .then(m => m.NotificationsComponent),
+    canActivate: [authGuard]
+  },
+  {
+  path: 'team',
+  loadComponent: () =>
+    import('./features/team/team')
+      .then(m => m.TeamComponent),
+  canActivate: [authGuard, roleGuard],
+  data: { roles: ['OWNER'] }
+},
 ];

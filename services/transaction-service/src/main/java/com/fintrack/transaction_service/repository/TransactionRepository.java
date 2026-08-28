@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public interface TransactionRepository  extends JpaRepository<Transaction, UUID> {
@@ -30,4 +31,6 @@ public interface TransactionRepository  extends JpaRepository<Transaction, UUID>
             @Param("endDate")LocalDate endDate,
             Pageable pageable
             );
+
+    List<Transaction> findByCompanyIdAndDateBetween(UUID companyId, LocalDate startDate, LocalDate endDate);
 }

@@ -1,0 +1,106 @@
+<div class="team-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Team members</h1>
+      <p>Invite accountants and manage access.</p>
+    </div>
+    <button class="btn-invite" (click)="openInviteModal()">
+      <span class="material-icons">person_add</span>
+      Invite accountant
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading">Loading team members...</div>
+  }
+
+  <!-- Team Table -->
+  @if (!loading) {
+    <div class="table-container">
+      <table class="team-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (member of members; track member.id) {
+            <tr>
+              <td class="name-cell">{{ getFullName(member) }}</td>
+              <td class="email-cell">{{ member.email }}</td>
+              <td>
+                <span class="badge" [ngClass]="getRoleBadgeClass(member.role)">
+                  {{ member.role | titlecase }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="getStatusBadgeClass(member.status)">
+                  {{ member.status | titlecase }}
+                </span>
+              </td>
+              <td class="actions-cell">
+                @if (!isOwner(member)) {
+                  <button class="btn-remove" (click)="removeMember(member.id)">
+                    <span class="material-icons">delete_outline</span>
+                    Remove access
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+
+          @if (members.length === 0) {
+            <tr>
+              <td colspan="5" class="empty-cell">
+                No team members yet. Invite an accountant!
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
+
+<!-- Invite Modal -->
+@if (showInviteModal) {
+  <div class="modal-overlay" (click)="closeInviteModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Invite an accountant</h2>
+        <button class="close-btn" (click)="closeInviteModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Name (optional)</label>
+          <input
+            type="text"
+            [(ngModel)]="inviteForm.name"
+            placeholder="">
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            [(ngModel)]="inviteForm.email"
+            placeholder="accountant@company.ma">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeInviteModal()">Cancel</button>
+        <button class="btn-save" (click)="sendInvite()">Send invite</button>
+      </div>
+    </div>
+  </div>
+}

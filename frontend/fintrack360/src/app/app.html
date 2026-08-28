@@ -1,4 +1,4 @@
-<div class="app-layout" *ngIf="isAuthenticated; else publicOutlet">
+<div class="app-layout" *ngIf="showChrome; else publicOutlet">
   <app-sidebar></app-sidebar>
   <div class="main-content">
     <app-navbar [pageTitle]="'FinTrack360'"></app-navbar>

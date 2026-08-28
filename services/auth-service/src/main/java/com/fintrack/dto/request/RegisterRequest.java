@@ -24,9 +24,12 @@ public class RegisterRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
-    @NotBlank(message = "Company name is required")
+    // Required when registering as a new company owner; ignored when inviteToken is set.
     private String companyName;
 
-    @NotBlank(message = "Sector is required")
     private String sector;
+
+    // When present, this registration joins an existing company as an ACCOUNTANT
+    // instead of creating a new company as an OWNER.
+    private String inviteToken;
 }

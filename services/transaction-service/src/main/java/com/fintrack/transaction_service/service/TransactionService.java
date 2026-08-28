@@ -165,9 +165,7 @@ public class TransactionService {
             UUID companyId, LocalDate startDate, LocalDate endDate) {
 
         List<Transaction> transactions = transactionRepository
-                .findWithFilters(companyId, null, null, startDate, endDate,
-                        PageRequest.of(0, 1000))
-                .getContent();
+                .findByCompanyIdAndDateBetween(companyId, startDate, endDate);
 
         // Group by month
         Map<String, Map<String, Object>> monthlyData = new LinkedHashMap<>();

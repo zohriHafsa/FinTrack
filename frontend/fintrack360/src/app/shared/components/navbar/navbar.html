@@ -4,14 +4,20 @@
   </div>
 
   <div class="navbar-right">
-    
-    <button class="icon-btn">
+
+    <!-- Notification Bell -->
+    <button class="icon-btn notification-btn" (click)="goToNotifications()">
       <span class="material-icons">notifications</span>
+      @if (unreadCount > 0) {
+        <span class="badge">{{ unreadCount > 9 ? '9+' : unreadCount }}</span>
+      }
     </button>
 
-    
-    <button class="icon-btn" (click)="logout()">
-      <span class="material-icons">logout</span>
-    </button>
+    <!-- User Avatar -->
+    <div class="user-avatar">
+      <span>{{ userInitials }}</span>
+      <span class="user-role">{{ userRole }}</span>
+    </div>
+
   </div>
 </div>

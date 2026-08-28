@@ -1,9 +1,24 @@
 <div class="register-screen">
   <div class="register-card">
 
-    @if (!submitted) {
-      <h1>Create your account</h1>
-      <p class="subtitle">Set up your company on FinTrack360</p>
+    @if (checkingInvite) {
+      <div class="success-panel">
+        <h1>Checking your invitation&hellip;</h1>
+      </div>
+    } @else if (inviteInvalidMessage) {
+      <div class="success-panel">
+        <span class="material-icons">error_outline</span>
+        <h1>Invitation not valid</h1>
+        <p>{{ inviteInvalidMessage }}</p>
+        <button class="submit-btn" (click)="goToLogin()">Go to login</button>
+      </div>
+    } @else if (!submitted) {
+      <h1>{{ inviteToken ? 'Join your team' : 'Create your account' }}</h1>
+      <p class="subtitle">
+        {{ inviteToken
+          ? 'Finish setting up your Accountant account on FinTrack360'
+          : 'Set up your company on FinTrack360' }}
+      </p>
 
       <form (ngSubmit)="submit()" #registerForm="ngForm">
         <div class="form-row">
@@ -19,7 +34,7 @@
 
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" [(ngModel)]="form.email" required>
+          <input type="email" name="email" [(ngModel)]="form.email" required [readonly]="!!inviteToken">
         </div>
 
         <div class="form-row">
@@ -33,28 +48,30 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Company name</label>
-          <input type="text" name="companyName" [(ngModel)]="form.companyName" required>
-        </div>
+        @if (!inviteToken) {
+          <div class="form-group">
+            <label>Company name</label>
+            <input type="text" name="companyName" [(ngModel)]="form.companyName" required>
+          </div>
 
-        <div class="form-group">
-          <label>Sector</label>
-          <input type="text" name="sector" [(ngModel)]="form.sector" required
-                 list="sector-suggestions" placeholder="e.g. Bakery, Consulting...">
-          <datalist id="sector-suggestions">
-            @for (sector of sectors; track sector) {
-              <option [value]="sector"></option>
-            }
-          </datalist>
-        </div>
+          <div class="form-group">
+            <label>Sector</label>
+            <input type="text" name="sector" [(ngModel)]="form.sector" required
+                   list="sector-suggestions" placeholder="e.g. Bakery, Consulting...">
+            <datalist id="sector-suggestions">
+              @for (sector of sectors; track sector) {
+                <option [value]="sector"></option>
+              }
+            </datalist>
+          </div>
+        }
 
         @if (errorMessage) {
           <div class="error-banner">{{ errorMessage }}</div>
         }
 
         <button type="submit" class="submit-btn" [disabled]="submitting || registerForm.invalid">
-          {{ submitting ? 'Creating account...' : 'Create account' }}
+          {{ submitting ? 'Creating account...' : (inviteToken ? 'Join team' : 'Create account') }}
         </button>
       </form>
 
@@ -67,8 +84,12 @@
         <span class="material-icons">check_circle</span>
         <h1>Account created</h1>
         <p>
-          Your company is being set up now &mdash; this takes a few seconds.
-          Log in when you're ready.
+          @if (inviteToken) {
+            You're all set &mdash; log in to start working with your team.
+          } @else {
+            Your company is being set up now &mdash; this takes a few seconds.
+            Log in when you're ready.
+          }
         </p>
         <button class="submit-btn" (click)="goToLogin()">Log in</button>
       </div>

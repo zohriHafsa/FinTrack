@@ -27,6 +27,8 @@ export class SidebarComponent implements OnInit {
     { label: 'Invoices', route: '/invoices', icon: 'description', roles: [] },
     { label: 'Budgets', route: '/budgets', icon: 'account_balance_wallet', roles: ['OWNER'] },
     { label: 'Insights', route: '/insights', icon: 'insights', roles: [] },
+    { label: 'Team', route: '/team', icon: 'group', roles: ['OWNER'] }, 
+    { label: 'Notifications', route: '/notifications', icon: 'notifications', roles: [] },  
     { label: 'Admin', route: '/admin', icon: 'admin_panel_settings', roles: ['ADMIN'] },
   ];
 
