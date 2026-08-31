@@ -4,9 +4,10 @@ import { roleGuard } from './core/guards/role-guard';
 
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
+  path: '',
+  loadComponent: () =>
+    import('./features/landing/landing')
+      .then(m => m.LandingComponent)
   },
   {
     path: 'login',

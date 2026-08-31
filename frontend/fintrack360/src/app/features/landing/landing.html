@@ -1,0 +1,158 @@
+<div class="landing">
+
+  <!-- Navbar -->
+  <nav class="landing-nav">
+    <div class="nav-brand">
+      <div class="brand-icon">F</div>
+      <span class="brand-name">FinTrack<span class="brand-accent">360</span></span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-login" (click)="login()">Sign in</button>
+      <button class="btn-register" (click)="register()">Get started free →</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+
+    <!-- Left: Text -->
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Built for Moroccan SMEs
+      </div>
+
+      <h1>
+        Financial clarity,<br>
+        without the<br>
+        <span class="hero-highlight">spreadsheet mess.</span>
+      </h1>
+
+      <p>
+        FinTrack360 gives small and medium businesses real-time visibility
+        into cash flow, invoices, and budgets. Trusted, secure, and simple
+        enough for any team.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn-hero-primary" (click)="register()">
+          Get started free →
+        </button>
+        <button class="btn-hero-secondary" (click)="login()">
+          Sign in
+        </button>
+      </div>
+
+      <div class="hero-checks">
+        <span><span class="check">✓</span> No credit card</span>
+        <span><span class="check">✓</span> Setup in 5 minutes</span>
+        <span><span class="check">✓</span> Bank-grade security</span>
+      </div>
+    </div>
+
+    <!-- Right: Dashboard Mockup -->
+    <div class="hero-visual">
+      <div class="dashboard-mockup">
+        <div class="mockup-header">
+          <div class="mockup-dots">
+            <span class="dot-red"></span>
+            <span class="dot-yellow"></span>
+            <span class="dot-green"></span>
+          </div>
+          <span class="mockup-title">FinTrack360 Dashboard</span>
+        </div>
+
+        <div class="mockup-body">
+          <!-- Stats Row -->
+          <div class="mockup-stats">
+            <div class="mockup-stat green">
+              <span class="stat-icon material-icons">trending_up</span>
+              <div>
+                <div class="stat-label">Revenue</div>
+                <div class="stat-val">125,400 MAD</div>
+              </div>
+            </div>
+            <div class="mockup-stat red">
+              <span class="stat-icon material-icons">trending_down</span>
+              <div>
+                <div class="stat-label">Expenses</div>
+                <div class="stat-val">48,200 MAD</div>
+              </div>
+            </div>
+            <div class="mockup-stat blue">
+              <span class="stat-icon material-icons">account_balance</span>
+              <div>
+                <div class="stat-label">Net Flow</div>
+                <div class="stat-val">+77,200 MAD</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart -->
+          <div class="mockup-chart">
+            <div class="chart-label">Monthly Overview</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:50%"><span>Jan</span></div>
+              <div class="chart-bar" style="height:70%"><span>Feb</span></div>
+              <div class="chart-bar" style="height:45%"><span>Mar</span></div>
+              <div class="chart-bar" style="height:85%"><span>Apr</span></div>
+              <div class="chart-bar" style="height:60%"><span>May</span></div>
+              <div class="chart-bar active" style="height:90%"><span>Jun</span></div>
+            </div>
+          </div>
+
+          <!-- Insight Card -->
+          <div class="mockup-insight">
+            <span class="material-icons insight-icon">auto_awesome</span>
+            <div>
+              <div class="insight-title">AI Insight</div>
+              <div class="insight-text">Revenue up 15% vs last month</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="features-header">
+      <h2>Everything you need to manage your business finances</h2>
+      <p>Powerful tools designed specifically for Moroccan SMEs</p>
+    </div>
+
+    <div class="features-grid">
+      @for (feature of features; track feature.title) {
+        <div class="feature-card">
+          <div class="feature-icon">
+            <span class="material-icons">{{ feature.icon }}</span>
+          </div>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="cta-content">
+      <h2>Ready to take control of your finances?</h2>
+      <p>Join hundreds of Moroccan SMEs already using FinTrack360</p>
+      <button class="btn-cta" (click)="register()">
+        Get started for free
+        <span class="material-icons">arrow_forward</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <div class="footer-brand">
+      <div class="brand-icon small">F</div>
+      <span>FinTrack360</span>
+    </div>
+    <p>© 2026 FinTrack360. Built for Moroccan SMEs.</p>
+  </footer>
+
+</div>
