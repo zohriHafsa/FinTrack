@@ -1,0 +1,72 @@
+<div class="admin-space">
+
+  <!-- Admin Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">F</div>
+      <div>
+        <div class="brand-name">FinTrack<span>360</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">A</div>
+      <div>
+        <div class="user-name">{{ getUsername() }}</div>
+        <div class="user-role">Administrator</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button
+        class="nav-item"
+        [ngClass]="{ active: activeTab === 'overview' }"
+        (click)="setTab('overview')">
+        <span class="material-icons">dashboard</span>
+        Overview
+      </button>
+
+      <button
+        class="nav-item"
+        [ngClass]="{ active: activeTab === 'companies' }"
+        (click)="setTab('companies')">
+        <span class="material-icons">business</span>
+        Companies
+      </button>
+
+      <button
+        class="nav-item"
+        [ngClass]="{ active: activeTab === 'users' }"
+        (click)="setTab('users')">
+        <span class="material-icons">people</span>
+        Users
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <span class="material-icons">logout</span>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Admin Main Content -->
+  <main class="admin-main">
+
+    <!-- Top Bar -->
+    <div class="admin-topbar">
+      <h1 class="page-title">
+        @if (activeTab === 'overview') { Platform Overview }
+        @if (activeTab === 'companies') { Companies }
+        @if (activeTab === 'users') { Users }
+      </h1>
+
+    </div>
+
+    <!-- Content -->
+    <app-admin-dashboard [activeTab]="activeTab"></app-admin-dashboard>
+
+  </main>
+
+</div>

@@ -112,6 +112,6 @@ export class Register implements OnInit {
   }
 
   goToLogin(): void {
-    this.keycloakService.login();
+    this.keycloakService.login(window.location.origin + '/dashboard');
   }
 }

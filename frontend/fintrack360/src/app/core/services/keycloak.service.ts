@@ -31,8 +31,8 @@ export class KeycloakService {
     }
   }
 
-  login(): void {
-    this.keycloak.login();
+  login(redirectUri?: string): void {
+    this.keycloak.login(redirectUri ? { redirectUri } : undefined);
   }
 
   logout(): void {

@@ -14,6 +14,6 @@ export class Login {
   constructor(private keycloakService: KeycloakService) {}
 
   login(): void {
-    this.keycloakService.login();
+    this.keycloakService.login(window.location.origin + '/dashboard');
   }
 }

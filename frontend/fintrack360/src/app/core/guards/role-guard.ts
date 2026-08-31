@@ -1,22 +1,28 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { Router } from '@angular/router';
 import { KeycloakService } from '../services/keycloak.service';
 
-export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
-  const keycloakService = inject(KeycloakService);
+export const roleGuard = (route: any) => {
+  const keycloak = inject(KeycloakService);
   const router = inject(Router);
-  const requiredRoles: string[] = route.data?.['roles'] || [];
 
-  if (requiredRoles.length === 0) {
-    return keycloakService.isAuthenticated();
+  const requiredRoles: string[] = route.data?.roles || [];
+
+  // Admin guard - only ADMIN can access /admin
+  if (requiredRoles.includes('ADMIN')) {
+    if (keycloak.hasRole('ADMIN')) {
+      return true;
+    }
+    router.navigate(['/unauthorized']);
+    return false;
   }
 
-  const hasRole = requiredRoles.some(role => keycloakService.hasRole(role));
-
-  if (hasRole) {
-    return true;
+  // Owner/Accountant guard
+  const hasRole = requiredRoles.some(role => keycloak.hasRole(role));
+  if (!hasRole && requiredRoles.length > 0) {
+    router.navigate(['/unauthorized']);
+    return false;
   }
 
-  router.navigate(['/unauthorized']);
-  return false;
+  return true;
 };

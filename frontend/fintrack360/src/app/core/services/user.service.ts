@@ -77,4 +77,21 @@ inviteAccountant(companyId: string, data: { name: string, email: string }): Obse
 removeMember(companyId: string, userId: string): Observable<void> {
   return this.http.delete<void>(`${this.apiUrl}/team/${companyId}/members/${userId}`);
 }
+
+getAllUsers(): Observable<any[]> {
+  return this.http.get<any[]>(`${environment.apiUrl}/admin/users`);
+}
+
+getAllCompanies(): Observable<any[]> {
+  return this.http.get<any[]>(`${environment.apiUrl}/admin/companies`);
+}
+
+deleteUser(id: string): Observable<void> {
+  return this.http.delete<void>(`${environment.apiUrl}/admin/users/${id}`);
+}
+
+deleteCompany(id: string): Observable<void> {
+  return this.http.delete<void>(`${environment.apiUrl}/admin/companies/${id}`);
+}
+
 }

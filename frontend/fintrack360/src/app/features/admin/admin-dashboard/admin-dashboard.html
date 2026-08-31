@@ -1,0 +1,196 @@
+<div class="dashboard-content">
+
+  <!-- Overview Tab -->
+  @if (activeTab === 'overview') {
+    <div class="overview">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-icon">
+            <span class="material-icons">business</span>
+          </div>
+          <div>
+            <div class="stat-value">{{ stats.totalCompanies }}</div>
+            <div class="stat-label">Total Companies</div>
+          </div>
+        </div>
+
+        <div class="stat-card green">
+          <div class="stat-icon">
+            <span class="material-icons">people</span>
+          </div>
+          <div>
+            <div class="stat-value">{{ stats.totalUsers }}</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+        </div>
+
+        <div class="stat-card purple">
+          <div class="stat-icon">
+            <span class="material-icons">manage_accounts</span>
+          </div>
+          <div>
+            <div class="stat-value">{{ stats.totalOwners }}</div>
+            <div class="stat-label">Owners</div>
+          </div>
+        </div>
+
+        <div class="stat-card orange">
+          <div class="stat-icon">
+            <span class="material-icons">calculate</span>
+          </div>
+          <div>
+            <div class="stat-value">{{ stats.totalAccountants }}</div>
+            <div class="stat-label">Accountants</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Companies -->
+      <div class="section">
+        <h3>Recent Companies</h3>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Sector</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of companies.slice(0, 5); track c.id) {
+                <tr>
+                  <td class="fw">{{ c.name }}</td>
+                  <td>{{ c.sector }}</td>
+                  <td>{{ formatDate(c.createdAt) }}</td>
+                </tr>
+              }
+              @if (companies.length === 0) {
+                <tr><td colspan="3" class="empty">No companies yet</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Users -->
+      <div class="section">
+        <h3>Recent Users</h3>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (u of users.slice(0, 5); track u.id) {
+                <tr>
+                  <td class="fw">{{ u.email }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getRoleBadgeClass(u.role)">
+                      {{ u.role }}
+                    </span>
+                  </td>
+                  <td>{{ formatDate(u.createdAt) }}</td>
+                </tr>
+              }
+              @if (users.length === 0) {
+                <tr><td colspan="3" class="empty">No users yet</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  <!-- Companies Tab -->
+  @if (activeTab === 'companies') {
+    <div class="section">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Sector</th>
+              <th>Owner ID</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of companies; track c.id) {
+              <tr>
+                <td class="fw">{{ c.name }}</td>
+                <td>{{ c.sector }}</td>
+                <td class="mono">{{ c.ownerId }}</td>
+                <td>{{ formatDate(c.createdAt) }}</td>
+                <td>
+                  <button class="btn-del" (click)="deleteCompany(c.id)">
+                    <span class="material-icons">delete_outline</span>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (companies.length === 0) {
+              <tr><td colspan="5" class="empty">No companies found</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- Users Tab -->
+  @if (activeTab === 'users') {
+    <div class="section">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Company ID</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of users; track u.id) {
+              <tr>
+                <td class="fw">{{ u.email }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getRoleBadgeClass(u.role)">
+                    {{ u.role }}
+                  </span>
+                </td>
+                <td class="mono">{{ u.companyId || '-' }}</td>
+                <td>{{ formatDate(u.createdAt) }}</td>
+                <td>
+                  <button
+                    class="btn-del"
+                    (click)="deleteUser(u.id)"
+                    [disabled]="u.role === 'ADMIN'">
+                    <span class="material-icons">delete_outline</span>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (users.length === 0) {
+              <tr><td colspan="5" class="empty">No users found</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+</div>

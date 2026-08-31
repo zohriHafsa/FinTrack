@@ -3,12 +3,15 @@ import { authGuard } from './core/guards/auth-guard';
 import { roleGuard } from './core/guards/role-guard';
 
 export const routes: Routes = [
+  
   {
-  path: '',
-  loadComponent: () =>
-    import('./features/landing/landing')
-      .then(m => m.LandingComponent)
+    path: '',
+    loadComponent: () =>
+      import('./features/landing/landing')
+        .then(m => m.LandingComponent)
   },
+
+  
   {
     path: 'login',
     loadComponent: () =>
@@ -21,6 +24,18 @@ export const routes: Routes = [
       import('./features/auth/register/register')
         .then(m => m.Register)
   },
+
+  
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./features/admin/admin-layout/admin-layout')
+        .then(m => m.AdminLayoutComponent),
+    canActivate: [roleGuard],
+    data: { roles: ['ADMIN'] }
+  },
+
+  // ← OWNER/ACCOUNTANT SPACE
   {
     path: 'dashboard',
     loadComponent: () =>
@@ -58,18 +73,12 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'admin',
+    path: 'team',
     loadComponent: () =>
-      import('./features/admin/admin')
-        .then(m => m.Admin),
+      import('./features/team/team')
+        .then(m => m.TeamComponent),
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['ADMIN'] }
-  },
-  {
-    path: 'unauthorized',
-    loadComponent: () =>
-      import('./features/auth/unauthorized/unauthorized')
-        .then(m => m.Unauthorized)
+    data: { roles: ['OWNER'] }
   },
   {
     path: 'notifications',
@@ -79,11 +88,9 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-  path: 'team',
-  loadComponent: () =>
-    import('./features/team/team')
-      .then(m => m.TeamComponent),
-  canActivate: [authGuard, roleGuard],
-  data: { roles: ['OWNER'] }
-},
+    path: 'unauthorized',
+    loadComponent: () =>
+      import('./features/auth/unauthorized/unauthorized')
+        .then(m => m.Unauthorized)
+  }
 ];
