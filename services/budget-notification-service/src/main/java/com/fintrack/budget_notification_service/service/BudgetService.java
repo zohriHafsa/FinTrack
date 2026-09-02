@@ -7,17 +7,17 @@ import com.fintrack.budget_notification_service.exception.ResourceNotFoundExcept
 import com.fintrack.budget_notification_service.kafka.producer.BudgetEventProducer;
 import com.fintrack.budget_notification_service.kafka.producer.BudgetExceededEvent;
 import com.fintrack.budget_notification_service.mapper.BudgetMapper;
+import com.fintrack.budget_notification_service.model.AlertPreferences;
 import com.fintrack.budget_notification_service.model.Budget;
-import com.fintrack.budget_notification_service.model.Notification;
 import com.fintrack.budget_notification_service.model.NotificationType;
 import com.fintrack.budget_notification_service.repository.BudgetRepository;
-import com.fintrack.budget_notification_service.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,8 +28,10 @@ import java.util.UUID;
 @Slf4j
 public class BudgetService {
 
+    private static final BigDecimal WARNING_THRESHOLD_PERCENT = BigDecimal.valueOf(90);
+
     private final BudgetRepository budgetRepository;
-    private final NotificationRepository notificationRepository;
+    private final NotificationService notificationService;
     private final BudgetEventProducer budgetEventProducer;
 
     @Transactional
@@ -62,6 +64,8 @@ public class BudgetService {
                         "Budget not found with id: " + id
                 ));
         budget.setLimitAmount(request.getLimitAmount());
+        budget.setWarningSent(false);
+        budget.setExceededSent(false);
         Budget updated = budgetRepository.save(budget);
         return BudgetMapper.toResponse(updated);
     }
@@ -76,8 +80,7 @@ public class BudgetService {
     }
 
     @Transactional
-    public void updateSpendAndCheckBudget(UUID companyId, UUID categoryId,
-                                          BigDecimal amount, UUID userId) {
+    public void updateSpendAndCheckBudget(UUID companyId, UUID categoryId, BigDecimal amount) {
 
         Optional<Budget> budgetOpt = budgetRepository
                 .findByCompanyIdAndCategoryId(companyId, categoryId);
@@ -91,26 +94,21 @@ public class BudgetService {
         Budget budget = budgetOpt.get();
         BigDecimal newSpend = budget.getCurrentSpend().add(amount);
         budget.setCurrentSpend(newSpend);
-        budgetRepository.save(budget);
 
-        // Check if budget exceeded
-        if (newSpend.compareTo(budget.getLimitAmount()) > 0) {
-            log.warn("Budget exceeded for company: {} category: {}",
-                    companyId, categoryId);
+        BigDecimal percentageUsed = budget.getLimitAmount().signum() == 0
+                ? BigDecimal.ZERO
+                : newSpend.multiply(BigDecimal.valueOf(100))
+                        .divide(budget.getLimitAmount(), 2, RoundingMode.HALF_UP);
 
-            // Create notification
-            Notification notification = Notification.builder()
-                    .companyId(companyId)
-                    .userId(userId)
-                    .type(NotificationType.BUDGET_EXCEEDED)
-                    .message(String.format(
-                            "Budget exceeded! Spent %.2f MAD of %.2f MAD limit",
-                            newSpend, budget.getLimitAmount()))
-                    .isRead(false)
-                    .build();
-            notificationRepository.save(notification);
+        if (percentageUsed.compareTo(BigDecimal.valueOf(100)) >= 0 && !budget.getExceededSent()) {
+            log.warn("Budget exceeded for company: {} category: {}", companyId, categoryId);
+            budget.setExceededSent(true);
 
-            // Publish Kafka event
+            notificationService.notifyCompany(companyId, NotificationType.BUDGET_EXCEEDED,
+                    String.format("Budget exceeded! Spent %.2f MAD of %.2f MAD limit (%.0f%% used).",
+                            newSpend, budget.getLimitAmount(), percentageUsed),
+                    AlertPreferences::getBudgetAlerts);
+
             budgetEventProducer.publishBudgetExceeded(
                     BudgetExceededEvent.builder()
                             .budgetId(budget.getId())
@@ -121,6 +119,18 @@ public class BudgetService {
                             .exceededAt(LocalDateTime.now())
                             .build()
             );
+
+        } else if (percentageUsed.compareTo(WARNING_THRESHOLD_PERCENT) >= 0 && !budget.getWarningSent()) {
+            log.info("Budget nearing limit for company: {} category: {} ({}% used)",
+                    companyId, categoryId, percentageUsed);
+            budget.setWarningSent(true);
+
+            notificationService.notifyCompany(companyId, NotificationType.BUDGET_WARNING,
+                    String.format("Heads up: you've used %.0f%% of your %.2f MAD budget (%.2f MAD spent so far).",
+                            percentageUsed, budget.getLimitAmount(), newSpend),
+                    AlertPreferences::getBudgetAlerts);
         }
+
+        budgetRepository.save(budget);
     }
 }

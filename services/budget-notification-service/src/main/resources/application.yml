@@ -44,6 +44,10 @@ kafka:
     invoice-status-changed: invoice.status.changed
     budget-exceeded: budget.exceeded
 
+services:
+  auth-service:
+    url: http://localhost:8081
+
 server:
   port: 8085
 

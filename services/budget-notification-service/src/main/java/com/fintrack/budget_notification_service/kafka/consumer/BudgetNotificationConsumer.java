@@ -1,5 +1,6 @@
 package com.fintrack.budget_notification_service.kafka.consumer;
 
+import com.fintrack.budget_notification_service.model.AlertPreferences;
 import com.fintrack.budget_notification_service.model.NotificationType;
 import com.fintrack.budget_notification_service.service.BudgetService;
 import com.fintrack.budget_notification_service.service.NotificationService;
@@ -27,8 +28,7 @@ public class BudgetNotificationConsumer {
             budgetService.updateSpendAndCheckBudget(
                     event.getCompanyId(),
                     event.getCategoryId(),
-                    event.getAmount(),
-                    event.getCompanyId()
+                    event.getAmount()
             );
         }
     }
@@ -43,19 +43,19 @@ public class BudgetNotificationConsumer {
                 event.getInvoiceId(), event.getStatus());
 
         if ("OVERDUE".equals(event.getStatus())) {
-            notificationService.createNotification(
-                    event.getCompanyId(),
+            notificationService.notifyCompany(
                     event.getCompanyId(),
                     NotificationType.INVOICE_OVERDUE,
                     String.format("Invoice of %.2f MAD is overdue since %s",
-                            event.getAmount(), event.getDueDate())
+                            event.getAmount(), event.getDueDate()),
+                    AlertPreferences::getInvoiceOverdue
             );
         } else if ("PAID".equals(event.getStatus())) {
-            notificationService.createNotification(
-                    event.getCompanyId(),
+            notificationService.notifyCompany(
                     event.getCompanyId(),
                     NotificationType.PAYMENT_RECEIVED,
-                    String.format("Payment of %.2f MAD received", event.getAmount())
+                    String.format("Payment of %.2f MAD received", event.getAmount()),
+                    AlertPreferences::getPaymentReceived
             );
         }
     }

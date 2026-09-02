@@ -1,10 +1,25 @@
 <div class="login-screen">
-  <h1>FinTrack360</h1>
-  <p>Financial management for Moroccan SMEs</p>
-  <button class="login-btn" (click)="login()">
-    Login with Keycloak
-  </button>
-  <p class="signup-hint">
-    New here? <a routerLink="/register">Create a company account</a>
-  </p>
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-icon">F</div>
+      <h1>FinTrack360</h1>
+    </div>
+    <p class="subtitle">Financial management for Moroccan SMEs</p>
+
+    @if (errorMessage) {
+      <div class="error-message">
+        <span class="material-icons">warning</span>
+        {{ errorMessage }}
+      </div>
+    }
+
+    <button class="login-btn" (click)="login()">
+      <span class="material-icons">login</span>
+      Sign in with Keycloak
+    </button>
+
+    <p class="signup-hint">
+      New here? <a routerLink="/register">Create a company account</a>
+    </p>
+  </div>
 </div>

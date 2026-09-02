@@ -71,6 +71,7 @@ export class NotificationsComponent implements OnInit {
   getTypeLabel(type: string): string {
     switch (type) {
       case 'BUDGET_EXCEEDED': return 'Budget exceeded';
+      case 'BUDGET_WARNING': return 'Budget nearing limit';
       case 'INVOICE_OVERDUE': return 'Invoice overdue';
       case 'PAYMENT_RECEIVED': return 'Payment received';
       case 'WEEKLY_SUMMARY': return 'Weekly summary';
@@ -81,6 +82,7 @@ export class NotificationsComponent implements OnInit {
   getTypeIcon(type: string): string {
     switch (type) {
       case 'BUDGET_EXCEEDED': return 'warning';
+      case 'BUDGET_WARNING': return 'trending_up';
       case 'INVOICE_OVERDUE': return 'receipt_long';
       case 'PAYMENT_RECEIVED': return 'payments';
       case 'WEEKLY_SUMMARY': return 'summarize';
@@ -91,6 +93,7 @@ export class NotificationsComponent implements OnInit {
   getTypeColor(type: string): string {
     switch (type) {
       case 'BUDGET_EXCEEDED': return '#ef4444';
+      case 'BUDGET_WARNING': return '#f59e0b';
       case 'INVOICE_OVERDUE': return '#f59e0b';
       case 'PAYMENT_RECEIVED': return '#22c55e';
       default: return '#3b82f6';

@@ -1,52 +1,111 @@
 .login-screen {
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: #1e293b;
-  color: white;
-  gap: 16px;
+  background: #f8fafc;
+}
+
+.login-card {
+  background: white;
+  border-radius: 16px;
+  padding: 48px;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  text-align: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  .brand-icon {
+    width: 40px;
+    height: 40px;
+    background: #1e293b;
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 20px;
+  }
 
   h1 {
-    font-size: 48px;
+    font-size: 22px;
     font-weight: 700;
-    color: #3b82f6;
+    color: #0f172a;
     margin: 0;
   }
+}
 
-  p {
+.subtitle {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+
+.error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #ef4444;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: left;
+  margin-bottom: 20px;
+  line-height: 1.5;
+
+  .material-icons {
     font-size: 18px;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
+    flex-shrink: 0;
+    margin-top: 1px;
   }
+}
 
-  .login-btn {
-    padding: 12px 32px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s;
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #1e293b;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 20px;
 
-    &:hover {
-      background: #2563eb;
-    }
+  .material-icons { font-size: 18px; }
+
+  &:hover {
+    background: #334155;
+    transform: translateY(-1px);
   }
+}
 
-  .signup-hint {
-    font-size: 14px;
-    margin-top: 8px;
+.signup-hint {
+  font-size: 13px;
+  color: #64748b;
 
-    a {
-      color: #2dd4bf;
-      text-decoration: none;
+  a {
+    color: #14b8a6;
+    text-decoration: none;
+    font-weight: 500;
 
-      &:hover {
-        text-decoration: underline;
-      }
-    }
+    &:hover { text-decoration: underline; }
   }
 }

@@ -44,6 +44,16 @@ public class Budget {
     @Builder.Default
     private BigDecimal currentSpend = BigDecimal.ZERO;
 
+    // Prevents re-sending the same warning/exceeded alert on every subsequent
+    // transaction once a threshold has already been crossed for this budget.
+    @Column(name = "warning_sent", nullable = false)
+    @Builder.Default
+    private Boolean warningSent = false;
+
+    @Column(name = "exceeded_sent", nullable = false)
+    @Builder.Default
+    private Boolean exceededSent = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
