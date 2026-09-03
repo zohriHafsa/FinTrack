@@ -43,7 +43,7 @@ public class InvoiceController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(invoiceService.getInvoices(
                 companyId, status, clientId, startDate, endDate, page, size));
     }

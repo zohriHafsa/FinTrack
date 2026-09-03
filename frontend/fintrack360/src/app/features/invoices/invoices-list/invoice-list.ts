@@ -14,6 +14,7 @@ import { UserService } from '../../../core/services/user.service';
 })
 export class InvoicesList implements OnInit {
 
+  Math = Math;
   invoices: Invoice[] = [];
   filteredInvoices: Invoice[] = [];
   clients: Client[] = [];
@@ -23,6 +24,10 @@ export class InvoicesList implements OnInit {
   saving = false;
   companyId = '';
   accountError: string | null = null;
+  currentPage = 0;
+  pageSize = 10;
+  totalElements = 0;
+  totalPages = 0;
 
   statusFilters = ['ALL', 'PAID', 'UNPAID', 'OVERDUE'];
 
@@ -72,11 +77,13 @@ export class InvoicesList implements OnInit {
     this.loading = true;
     const status = this.selectedStatus === 'ALL' ? undefined : this.selectedStatus;
 
-    this.invoiceService.getInvoices(this.companyId, status).subscribe({
+    this.invoiceService.getInvoices(this.companyId, status, this.currentPage, this.pageSize).subscribe({
       next: (page: InvoicePage) => {
         this.invoices = page.content;
         this.applySearch();
         this.loading = false;
+        this.totalElements = page.totalElements;
+        this.totalPages = page.totalPages;
       },
       error: (err: any) => {
         console.error('Error loading invoices:', err);
@@ -227,5 +234,24 @@ export class InvoicesList implements OnInit {
         this.saving = false;
       }
     });
+  }
+  nextPage(): void {
+    if (this.currentPage< this.totalPages - 1) {
+      this.currentPage++;
+      this.loadInvoices();
+    }
+  }
+
+  previousPage(): void {
+    if(this.currentPage>0){
+      this.currentPage--;
+      this.loadInvoices();
+    }
+  }
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.currentPage = page;
+      this.loadInvoices();
+    }
   }
 }
