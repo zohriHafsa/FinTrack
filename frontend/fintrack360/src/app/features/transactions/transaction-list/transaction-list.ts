@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService, Transaction, TransactionPage, CreateTransactionRequest } from '../../../core/services/transaction.service';
@@ -25,6 +25,10 @@ export class TransactionList implements OnInit {
   userId = '';
   showCreateForm = false;
   errorMessage = '';
+  importing = false;
+  importSuccess = false;
+  importedCount = 0;
+  importError = '';
 
   typeFilters = ['ALL', 'INCOME', 'EXPENSE'];
 
@@ -62,6 +66,54 @@ export class TransactionList implements OnInit {
       error: (err: any) => console.error('Error loading user:', err)
     });
   }
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
+triggerFileInput(): void {
+  this.fileInput.nativeElement.click();
+}
+
+onFileSelected(event: any): void {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Validate file type
+  if (!file.name.endsWith('.csv')) {
+    this.importError = 'Please select a valid CSV file.';
+    return;
+  }
+
+  this.importCsv(file);
+}
+
+importCsv(file: File): void {
+  this.importing = true;
+  this.importSuccess = false;
+  this.importError = '';
+
+  this.transactionService.importCsv(
+    this.companyId,
+    this.userId,
+    file
+  ).subscribe({
+    next: (transactions: any[]) => {
+      this.importing = false;
+      this.importSuccess = true;
+      this.importedCount = transactions.length;
+      this.loadTransactions();
+
+      // Hide success message after 3 seconds
+      setTimeout(() => this.importSuccess = false, 3000);
+
+      // Reset file input
+      this.fileInput.nativeElement.value = '';
+    },
+    error: (err: any) => {
+      this.importing = false;
+      this.importError = 'Failed to import CSV. Please check the file format.';
+      console.error('Import error:', err);
+    }
+  });
+}
 
   loadCategories(): void {
     this.companyService.getCategories(this.companyId).subscribe({

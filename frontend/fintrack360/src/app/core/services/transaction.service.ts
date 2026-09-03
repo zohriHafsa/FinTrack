@@ -84,4 +84,15 @@ export class TransactionService {
     return this.http.get<MonthlySummary[]>(
       `${this.apiUrl}/monthly-summary`, { params });
   }
+  importCsv(companyId: string, createdBy: string, file: File): Observable<any[]> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('companyId', companyId);
+  formData.append('createdBy', createdBy);
+
+  return this.http.post<any[]>(
+    `${environment.apiUrl}/transactions/import`,
+    formData
+  );
+}
 }
