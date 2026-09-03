@@ -14,6 +14,7 @@ import { CompanyService, Category } from '../../../core/services/company.service
 })
 export class TransactionList implements OnInit {
 
+  Math= Math;
   transactions: Transaction[] = [];
   filteredTransactions: Transaction[] = [];
   categories: Category[] = [];
@@ -29,6 +30,11 @@ export class TransactionList implements OnInit {
   importSuccess = false;
   importedCount = 0;
   importError = '';
+  currentPage = 0;
+  pageSize = 10;
+  totalElements = 0;
+  totalPages = 0;
+
 
   typeFilters = ['ALL', 'INCOME', 'EXPENSE'];
 
@@ -131,12 +137,14 @@ importCsv(file: File): void {
     this.loading = true;
     const type = this.selectedType === 'ALL' ? undefined : this.selectedType;
 
-    this.transactionService.getTransactions(this.companyId, type)
+    this.transactionService.getTransactions(this.companyId, type, this.currentPage, this.pageSize)
       .subscribe({
         next: (page: TransactionPage) => {
           this.transactions = page.content;
           this.applySearch();
           this.loading = false;
+          this.totalElements = page.totalElements;
+          this.totalPages = page.totalPages;
         },
         error: (err: any) => {
           console.error('Error loading transactions:', err);
@@ -219,5 +227,21 @@ importCsv(file: File): void {
 
   formatAmount(amount: number): string {
     return amount.toLocaleString('fr-MA') + ' MAD';
+  }
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.loadTransactions();
+    }
+  }
+  previousPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.loadTransactions();
+    }
+  }
+  goToPage(page: number): void {
+    this.currentPage = page;
+    this.loadTransactions();
   }
 }

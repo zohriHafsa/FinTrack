@@ -54,7 +54,7 @@ export class TransactionService {
     companyId: string,
     type?: string,
     page = 0,
-    size = 20
+    size = 10
   ): Observable<TransactionPage> {
     let params = new HttpParams()
       .set('companyId', companyId)

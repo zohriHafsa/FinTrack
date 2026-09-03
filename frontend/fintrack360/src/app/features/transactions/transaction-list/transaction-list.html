@@ -180,5 +180,37 @@
       </table>
     }
   </div>
+  <!-- Pagination -->
+@if (totalPages > 1) {
+  <div class="pagination">
+    <button 
+      class="page-btn"
+      (click)="previousPage()"
+      [disabled]="currentPage === 0">
+      <span class="material-icons">chevron_left</span>
+    </button>
+
+    @for (page of [].constructor(totalPages); track $index) {
+      <button
+        class="page-btn"
+        [ngClass]="{ active: currentPage === $index }"
+        (click)="goToPage($index)">
+        {{ $index + 1 }}
+      </button>
+    }
+
+    <button
+      class="page-btn"
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages - 1">
+      <span class="material-icons">chevron_right</span>
+    </button>
+
+    <span class="page-info">
+      {{ currentPage * pageSize + 1 }}-{{ Math.min((currentPage + 1) * pageSize, totalElements) }}
+      of {{ totalElements }}
+    </span>
+  </div>
+}
 
 </div>
